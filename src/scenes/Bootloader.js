@@ -63,9 +63,17 @@ export class Bootloader extends Phaser.Scene {
         
         console.log("Created platform texture");
         
-        // Audio assets would go here
-        // this.load.audio('jump', 'assets/sounds/jump.mp3');
-        // this.load.audio('shoot', 'assets/sounds/shoot.mp3');
+        // Load audio assets
+        this.load.audio('jump', 'assets/sounds/jump.mp3');
+        this.load.audio('shoot', 'assets/sounds/shot.mp3');
+        this.load.audio('explosion', 'assets/sounds/explosion.mp3');
+        this.load.audio('beam', 'assets/sounds/beam.mp3');
+        this.load.audio('death', 'assets/sounds/death.mp3');
+        this.load.audio('win', 'assets/sounds/win.mp3');
+        this.load.audio('powerup', 'assets/sounds/powerup.mp3');
+        this.load.audio('hit', 'assets/sounds/hit.mp3');
+        this.load.audio('gameover', 'assets/sounds/game-over.mp3');
+        this.load.audio('background', 'assets/sounds/background.mp3');
         
         // Load font
         // this.load.bitmapFont('pixelFont', 'assets/fonts/font.png', 'assets/fonts/font.xml');

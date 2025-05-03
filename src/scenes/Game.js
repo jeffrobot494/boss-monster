@@ -27,6 +27,13 @@ export class Game extends Phaser.Scene {
         // Add background
         this.background = this.add.tileSprite(640, 360, 1280, 720, 'background');
         
+        // Add background music
+        this.backgroundMusic = this.sound.add('background', {
+            volume: 0.3,
+            loop: true
+        });
+        this.backgroundMusic.play();
+        
         // Setup UI first
         this.setupBasicUI();
         
@@ -245,6 +252,9 @@ export class Game extends Phaser.Scene {
         this.cameras.main.flash(1000, 255, 0, 255);
         this.cameras.main.shake(500, 0.01);
         
+        // Play transition sound
+        this.sound.play('beam', { volume: 0.5 });
+        
         // Change boss appearance
         // In a full implementation, this would do more
         
@@ -266,6 +276,10 @@ export class Game extends Phaser.Scene {
         // Add more dramatic visual effect
         this.cameras.main.flash(1500, 255, 0, 0);
         this.cameras.main.shake(1000, 0.02);
+        
+        // Play more intense transition sound
+        this.sound.play('beam', { volume: 0.7 });
+        this.sound.play('explosion', { volume: 0.4, delay: 0.3 });
         
         // Change boss appearance
         // In a full implementation, this would do more
@@ -329,6 +343,9 @@ export class Game extends Phaser.Scene {
             console.warn("Tried to collect an invalid power-up");
             return;
         }
+        
+        // Play power-up sound
+        this.sound.play('powerup', { volume: 0.6 });
         
         // Get power-up data
         const text = powerUp.getData('text');
@@ -468,6 +485,9 @@ export class Game extends Phaser.Scene {
         const hitMarker = this.add.circle(projectile.x, projectile.y, 10, 0xff0000);
         this.time.delayedCall(300, () => hitMarker.destroy());
         
+        // Play hit sound
+        this.sound.play('hit', { volume: 0.4 });
+        
         // Check if part is vulnerable
         if (!bossPart.getData('vulnerable') && 
             !bossPart.getData('vulnerableDuring').includes('always')) {
@@ -542,6 +562,9 @@ export class Game extends Phaser.Scene {
     }
 
     destroyBossPart(part) {
+        // Play explosion sound
+        this.sound.play('explosion', { volume: 0.5 });
+        
         // Visual effect for destroyed part
         const explosion = this.add.graphics();
         explosion.fillStyle(0xff0000, 1);
@@ -590,6 +613,9 @@ export class Game extends Phaser.Scene {
     }
 
     playerDeath() {
+        // Play death sound
+        this.sound.play('death', { volume: 0.6 });
+        
         // Game over after delay
         this.time.delayedCall(2000, () => {
             this.gameOver(false);
@@ -600,6 +626,14 @@ export class Game extends Phaser.Scene {
         // Visual effects
         this.cameras.main.shake(1000, 0.05);
         this.cameras.main.flash(1000, 255, 255, 255);
+        
+        // Play victory sound
+        this.sound.play('win', { volume: 0.7 });
+        
+        // Stop background music
+        if (this.backgroundMusic) {
+            this.backgroundMusic.stop();
+        }
         
         // Show defeat message
         const text = this.add.text(640, 300, `${this.bossData.name} DEFEATED!`, {
@@ -672,6 +706,14 @@ export class Game extends Phaser.Scene {
         if (this.multiplayerManager) {
             this.multiplayerManager.disconnect();
         }
+        
+        // Stop background music
+        if (this.backgroundMusic) {
+            this.backgroundMusic.stop();
+        }
+        
+        // Play game over sound
+        this.sound.play('gameover', { volume: 0.7 });
         
         this.scene.start('GameOver', { win, score: this.score });
     }

@@ -124,12 +124,18 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         if (jumpPressed && this.body.touching.down) {
             this.doubleJumped = false;
             this.setVelocityY(-500);
+            
+            // Play jump sound
+            this.scene.sound.play('jump', { volume: 0.5 });
         }
         
         // Double jump
         else if (jumpPressed && !this.body.touching.down && !this.doubleJumped && !this.wallSliding) {
             this.doubleJumped = true;
             this.setVelocityY(-400);
+            
+            // Play double jump sound (slightly different pitch)
+            this.scene.sound.play('jump', { volume: 0.4, rate: 1.2 });
             
             // Visual effect for double jump
             const jumpEffect = this.scene.add.graphics();
@@ -159,6 +165,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             // Reset double jump after wall jump
             this.doubleJumped = false;
             this.wallSliding = false;
+            
+            // Play wall jump sound (different pitch)
+            this.scene.sound.play('jump', { volume: 0.5, rate: 0.8 });
             
             // Visual effect for wall jump
             const jumpEffect = this.scene.add.graphics();
@@ -270,6 +279,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     
     // Helper method to create projectile with given direction
     _createProjectile(normalizedDirX, normalizedDirY) {
+        
+        // Play shoot sound
+        this.scene.sound.play('shoot', { volume: 0.4 });
         
         // Create projectile
         const projectile = this.projectiles.get(this.x, this.y, 'platform');
@@ -407,6 +419,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     // Helper method to create sword hitbox with given direction
     _createSwordHitbox(normalizedDirX, normalizedDirY) {
         
+        // Play sword swing sound
+        this.scene.sound.play('hit', { volume: 0.5 });
+        
         // Create melee hitbox in the direction of the mouse
         const hitbox = this.scene.physics.add.sprite(
             this.x + normalizedDirX * 60, 
@@ -466,6 +481,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         // Make player invulnerable
         this.invulnerable = true;
         this.alpha = 0.5;
+        
+        // Play dodge sound
+        this.scene.sound.play('jump', { volume: 0.3, rate: 1.5 });
         
         // Apply dodge velocity in current movement direction
         let dodgeVelocityX = 0;
@@ -543,6 +561,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         // Skip if invulnerable
         if (this.invulnerable) return;
         
+        // Play damage sound
+        this.scene.sound.play('hit', { volume: 0.7 });
+        
         // Check for shield power-up
         if (this.powerUp && this.powerUp.type === 'defense') {
             // Use up the shield
@@ -617,6 +638,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.setTint(0xff0000);
         this.disableBody();
         
+        // Play death sound
+        this.scene.sound.play('death', { volume: 0.7 });
+        
         // Death effect
         const explosion = this.scene.add.graphics();
         explosion.fillStyle(0xff0000, 1);
@@ -645,6 +669,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     heal(amount) {
         this.health = Math.min(this.health + amount, this.maxHealth);
+        
+        // Play healing sound
+        this.scene.sound.play('powerup', { volume: 0.5, rate: 0.8 });
         
         // Visual healing effect
         const healText = this.scene.add.text(this.x, this.y - 40, `+${amount}`, {
